@@ -201,6 +201,35 @@ void serial_readwrite_task(void *pvParameters)
 	}
 }
 
+void task1(void *pvParameters){
+	while(1){
+		int i;
+		int j;
+		int sum = 0;
+		for(i = 0 ; i < 1000000;i++){
+			for(j = 0 ;j < 1000;j++){
+				sum+=i;
+				sum+=j;
+			}
+		}
+	}
+}
+/*
+void task2(void *pvParameters){
+	while(1){
+		int i;
+		int j;
+		int sum = 0;
+		for(i = 0 ; i < 1000000;i++){
+			for(j = 0 ;j < 1000;j++){
+				sum+=i;
+				sum+=j;
+			}
+		}
+
+	}
+}
+*/
 int main()
 {
 	logfile = open("log", 4);
@@ -219,6 +248,9 @@ int main()
 	serial_str_queue = xQueueCreate(10, sizeof(serial_str_msg));
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_ch_msg));
+
+	xTaskCreate(task1,(signed portCHAR *) "task1",512,NULL,tskIDLE_PRIORITY+1,NULL);
+//	xTaskCreate(task2,(signed portCHAR *) "task2",512,NULL,tskIDLE_PRIORITY+2,NULL);
 
 	/* Create a task to flash the LED. */
 	xTaskCreate(led_flash_task,
@@ -240,7 +272,6 @@ int main()
 	xTaskCreate(rs232_xmit_msg_task,
 	            (signed portCHAR *) "Serial Xmit Str",
 	            512 /* stack size */, NULL, tskIDLE_PRIORITY + 2, NULL);
-
 	/* Create a task to receive characters from the RS232 port and echo
 	 * them back to the RS232 port. */
 	xTaskCreate(serial_readwrite_task,

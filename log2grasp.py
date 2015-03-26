@@ -26,7 +26,6 @@ for line in lines :
 	
 	if inst == 'task' :
 		id, priority, name = args.split(' ', 2)
-		
 		task = {}
 		task['no'] = str(len(tasks) + 1)
 		task['priority'] = int(priority)
@@ -38,8 +37,8 @@ for line in lines :
 	elif inst == 'switch' :
 		out_task, in_task, tick, tick_reload, out_minitick, in_minitick = args.split(' ')
 		
-		out_time = (int(tick) + (int(tick_reload) - int(out_minitick)) / int(tick_reload)) / 100 * 1000;
-		in_time  = (int(tick) + (int(tick_reload) - int(in_minitick))  / int(tick_reload)) / 100 * 1000;
+		out_time = (float(tick) + (float(tick_reload) - float(out_minitick)) / float(tick_reload)) / 100 * 1000;
+		in_time  = (float(tick) + (float(tick_reload) - float(in_minitick))  / float(tick_reload)) / 100 * 1000;
 		
 		event = {}
 		event['type'] = 'task out'

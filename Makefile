@@ -1,5 +1,5 @@
 CROSS_COMPILE = arm-none-eabi-
-QEMU_STM32 ?= ../qemu_stm32/arm-softmmu/qemu-system-arm
+QEMU_STM32 ?= ~/STM32_QEMU/qemu_stm32/arm-softmmu/qemu-system-arm
 
 ARCH = CM3
 VENDOR = ST
@@ -56,7 +56,7 @@ qemu: out/main.bin $(QEMU_STM32)
 qemuauto: out/main.bin gdbscript
 	bash emulate.sh out/main.bin
 	python log2grasp.py
-	../grasp_linux/grasp sched.grasp
+	~/embedded/grasp_linux/grasp sched.grasp
 
 clean:
 	rm -rf out log sched.grasp
