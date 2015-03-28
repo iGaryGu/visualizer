@@ -26,4 +26,4 @@ stm32_qemu () {
 	kill $timer
 }
 
-stm32_qemu $1 5
+stm32_qemu $1 2

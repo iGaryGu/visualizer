@@ -5,10 +5,10 @@
 
 # Configure wether to trace these feature
 # Warning : Too many contents may freeze Grasp
-TRACE_QUEUE = True
-TRACE_MUTEX = True
-TRACE_BINARY_SEMAPHORE = False
-TRACE_INTERRUPT = False
+TRACE_QUEUE = True 
+TRACE_MUTEX = False
+TRACE_BINARY_SEMAPHORE = True 
+TRACE_INTERRUPT = False 
 
 log = open('log', 'r')
 lines = log.readlines()
@@ -19,6 +19,8 @@ mutexes = {}
 all_queues = {}
 binsems = {}
 queues = {}
+result = 0
+switch_time = 0;
 
 for line in lines :
 	line = line.strip()
@@ -37,9 +39,12 @@ for line in lines :
 	elif inst == 'switch' :
 		out_task, in_task, tick, tick_reload, out_minitick, in_minitick = args.split(' ')
 		
-		out_time = (float(tick) + (float(tick_reload) - float(out_minitick)) / float(tick_reload)) / 100 * 1000;
-		in_time  = (float(tick) + (float(tick_reload) - float(in_minitick))  / float(tick_reload)) / 100 * 1000;
+		out_time = (float(tick) + (float(tick_reload) - float(out_minitick)) / float(tick_reload))/ 1000 * 10000;
+		in_time  = (float(tick) + (float(tick_reload) - float(in_minitick))  / float(tick_reload))/ 1000 * 10000;
 		
+		diff_time = (float(out_minitick) - float(in_minitick)) / (float)(tick_reload)
+		result = result + diff_time
+		switch_time = switch_time+1
 		event = {}
 		event['type'] = 'task out'
 		event['task'] = out_task
@@ -68,6 +73,7 @@ for line in lines :
 		act, args = args.split(' ', 1)
 		if act == 'create' :
 			time, id, queue_type, queue_size = args.split(' ')
+			print queue_type
 
 			if queue_type == '0' and TRACE_QUEUE :
 				queue = {}
@@ -78,6 +84,7 @@ for line in lines :
 				all_queues[id] = queue
 
 			if queue_type == '3' and TRACE_BINARY_SEMAPHORE :	# Binary semaphore, see FreeRTOS/queue.c
+				print "haha"
 				binsem = {}
 				binsem['type'] = 'binary semaphore'
 				binsem['name'] = "Binary Semaphore " + str(len(binsems) + 1)
@@ -163,7 +170,10 @@ for line in lines :
 			tasks[int_num]['created'] = True if dir == 'in' else False
 
 log.close()
-
+print "result = ";
+print result;
+print "time = ";
+print switch_time;
 grasp = open('sched.grasp', 'w')
 
 for id in tasks :
